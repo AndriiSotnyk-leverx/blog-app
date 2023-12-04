@@ -78,7 +78,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 Create a `.env` file in the root directory:
 
 ```plaintext
-REACT_APP_API_URL=http://localhost:3000/api/v1
+REACT_APP_API_URL=http://localhost:3001/api/v1
 ```
 
 ## Built With
