@@ -1,4 +1,5 @@
 const request = require('supertest');
+const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const fs = require('fs/promises');
 let app;
@@ -15,7 +16,8 @@ beforeAll(async ()=>{
 });
 
 afterAll(async()=>{
-    await mongod.stop();
+    await mongoose.disconnect();
+    return await mongod.stop();
 })
 
 describe('Blog API', () => {
@@ -26,6 +28,7 @@ describe('Blog API', () => {
         const response = await request(app).get('/api/v1/posts');
         expect(response.statusCode).toBe(200);
         expect(Array.isArray(response.body)).toBeTruthy();
+        return response;
     });
 
     // Test for POST create a new post
@@ -39,6 +42,7 @@ describe('Blog API', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.title).toBe('Test Post');
         postId = response.body._id; // Store the postId for later tests
+        return response;
     });
 
     // Test for GET a single post
@@ -46,6 +50,7 @@ describe('Blog API', () => {
         const response = await request(app).get(`/api/v1/posts/${postId}`);
         expect(response.statusCode).toBe(200);
         expect(response.body.title).toBe('Test Post');
+        return response;
     });
 
     // Test for PUT update a post
@@ -57,6 +62,7 @@ describe('Blog API', () => {
             });
         expect(response.statusCode).toBe(200);
         expect(response.body.title).toBe('Updated Test Post');
+        return response;
     });
 
     // Test for DELETE a post
@@ -64,5 +70,6 @@ describe('Blog API', () => {
         const response = await request(app).delete(`/api/v1/posts/${postId}`);
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toBe('Post deleted successfully');
+        return response;
     });
 });
